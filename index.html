@@ -73,7 +73,7 @@
                     </nav>
                     <nav>
                         总文章数
-                        2
+                        3
                     </nav>
                     <nav class="header-smart-menu">
                         
@@ -164,6 +164,184 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-用户代理字符串检测脚本" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+    <div class="article-inner">
+        
+            <header class="article-header">
+                
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/27/%E7%94%A8%E6%88%B7%E4%BB%A3%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E6%B5%8B%E8%84%9A%E6%9C%AC/">用户代理字符串检测脚本</a>
+    </h1>
+  
+
+                    <!--显示阅读次数-->
+                    
+                            <!--显示阅读次数完毕-->
+                            
+                                <a href="/2020/07/27/%E7%94%A8%E6%88%B7%E4%BB%A3%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E6%B5%8B%E8%84%9A%E6%9C%AC/" class="archive-article-date">
+  	<time datetime="2020-07-27T02:07:03.598Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-27</time>
+</a>
+                                    
+            </header>
+            
+                <div class="article-entry" itemprop="articleBody">
+                    
+                                        <p>#用户代理检测<br>###客户端检测的最后一个选择，优先使用能力监测或怪癖检测.代理检测依赖用户代理字符串<br>var client = function() {<br>    //呈现引擎<br>    var engine = {<br>        ie: 0,<br>        gecko: 0,<br>        webkit: 0,<br>        khtml: 0,<br>        opera: 0,<br>        //完整的版本号<br>        ver: null<br>    };<br>    //浏览器<br>    var browser = {<br>        //主要浏览器<br>        ie: 0,<br>        firefox: 0,<br>        safari: 0,<br>        konq: 0,<br>        opera: 0,<br>        chrome: 0,<br>        //具体的版本号<br>        var: null<br>    };<br>    //平台，设备和操作系统<br>    var system = {<br>        win: false,<br>        mac: false,<br>        xll: false,<br>        //移动设备<br>        iphone: false,<br>        ipod: false,<br>        ipad: false,<br>        ios: false,<br>        android: false,<br>        nokiaN: false,<br>        winMobile: false,<br>        //游戏系统<br>        wii: false,<br>        ps: false<br>    };<br>    //检测呈现引擎和浏览器<br>    var ua = navigator.userAgent;<br>    if (window.opera) {<br>        engine.ver = browser.ver = window.opera.version();<br>        engine.opera = browser.opera = parseFloat(engine.ver);<br>    } else if (/AppleWebkit/(\s+)/.test(ua)) {<br>        engine.ver = RegExp[“$1”];<br>        engine.webkit = parseFloat(engine.ver);</p>
+<pre><code>    //确定是chrome还是Safari
+    if (/Chrome\/(\s+)/.test(ua)) {
+        browser.ver = RegExp[&quot;$1&quot;];
+        browser.chrome = parseFloat(browser.ver);
+    } else if (/Version\/(\s+)/.test(ua)) {
+        browser.ver = RegExp[&quot;$1&quot;];
+        browser.safari = parseFloat(browser.ver);
+    } else {
+        //近似的确定版本号
+        var safariVersion = 1;
+        if (engine.webkit &lt; 100) {
+            safariVersion = 1;
+        } else if (engine.webkit &lt; 312) {
+            safariVersion = 1.2;
+        } else if (engine.webkit &lt; 412) {
+            safariVersion = 1.3;
+        } else {
+            safariVersion = 2;
+        }
+        browser.safari = browser.ver = safariVersion;
+    }
+} else if (/KHTML\/(\S + ) /.test(ua) || /Konqueror\/([^;]+)/.test(ua)) {
+    engine.ver = browser.ver = RegExp[&quot;$1&quot;];
+    engine.khtml = browser.konq = parseFloat(engine.ver);
+} else if (/rv:([^\)]+)\) Gecko\/\d{8}/.test(ua)) {
+    engine.ver = RegExp[&quot;$1&quot;];
+    engine.gecko = parseFloat(engine.ver);
+    //确定是不是Firefox
+    if (/Firefox\/(\S+)/i.test(ua)) {
+        browser.ver = RegExp[&apos;$1&apos;];
+        browser.firefox = parseFloat(browser.ver);
+    }
+} else if (/MSIE ([^;]+)/i.test(ua)) {
+    engine.ver = browser.ver = RegExp[&apos;$1&apos;];
+    engine.ie = browser.ie = parseFloat(engine.ver);
+}
+//检测浏览器
+browser.ie = engine.ie;
+browser.opera = engine.opera;
+//检测平台
+var p = navigator.platform;
+system.win = p.indexOf(&quot;Win&quot;) == 0;
+system.mac = p.indexOf(&quot;Mac&quot;) == 0;
+system.xll = p.indexOf(&quot;Xll&quot;) == 0;
+//检测windows操作系统
+if (system.win) {
+    if (/Win(?:dows )?([^do]{2})\s?(\d+\.\d+)?/.test(ua)) {
+        if (RegExp[&apos;$1&apos;] == &apos;NT&apos;) {
+            switch (RegExp[&apos;$2&apos;]) {
+                case &apos;5.0&apos;:
+                    system.win = &apos;2000&apos;;
+                    break;
+                case &apos;5.1&apos;:
+                    system.win = &apos;XP&apos;;
+                    break;
+                case &apos;6.0&apos;:
+                    system.win = &apos;Vista&apos;;
+                    break;
+                case &apos;6.1&apos;:
+                    system.win = &apos;7&apos;;
+                    break;
+                case &apos;6.2&apos;:
+                    system.win = &apos;8&apos;;
+                    break;
+                default:
+                    system.win = &apos;NT&apos;;
+                    break;
+            }
+        } else if (RegExp[&apos;$1&apos;] == &apos;9x&apos;) {
+            // 检测windows ME
+            system.win = &apos;ME&apos;;
+        } else {
+            // 检测windows 95、windows 98
+            system.win = RegExp[&apos;$1&apos;];
+        }
+    }
+}
+//移动设备
+system.iphone = ua.indexOf(&quot;iPhone&quot;) &gt; -1;
+system.ipod = ua.indexOf(&quot;iPod&quot;) &gt; -1;
+system.ipad = ua.indexOf(&quot;iPad&quot;) &gt; -1;
+system.nokiaN = ua.indexOf(&quot;NokiaN&quot;) &gt; -1;
+//window monile
+if (system.win == &quot;CE&quot;) {
+    system.winMobile = system.win;
+} else if (system.win == &quot;Ph&quot;) {
+    if (/Windows Phone OS (\d+.\d+)/.test(ua)) {
+        system.win = &apos;Phone&apos;;
+        system.winMobile = parseFloat(RegExp[&apos;$1&apos;]);
+    }
+}
+//检测ios版本
+if (system.mac &amp;&amp; ua.indexOf(&apos;Mobile&apos;) &gt; -1) {
+    if (/CPU (?:iPhone )?OS (\d+_\d+)/.test(ua)) {
+        system.ios = parseFloat(RegExp.$1.replace(&apos;_&apos;, &apos;.&apos;));
+    } else {
+        system.ios = 2; //猜测
+    }
+}
+//检测Android版本
+if (/Android (\d+\.\d+)/.test(ua)) {
+    system.android = parseFloat(RegExp.$1);
+}
+//游戏系统
+system.wii = ua.indexOf(&apos;Wii&apos;) &gt; -1;
+system.ps = /playstation/i.test(ua);
+//返回这些对象
+return {
+    engine: engine,
+    browser: browser,
+    system: system
+}</code></pre><p>}();</p>
+
+                                            
+                                                
+                                                                    
+        </div>
+        <div class="article-info article-info-index">
+            
+                    
+                        
+
+                            
+                                <p class="article-more-link">
+                                    <a class="article-more-a" href="/2020/07/27/%E7%94%A8%E6%88%B7%E4%BB%A3%E7%90%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A3%80%E6%B5%8B%E8%84%9A%E6%9C%AC/">
+                                        展开全文 >></a>
+                                </p>
+                                
+
+                                    
+                                                <div class="clearfix"></div>
+        </div>
+        </div>
+</article>
+
+            <aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+                
   
     <article id="post-我的第一篇博客文章" class="article article-type-post  article-index" itemscope itemprop="blogPost">
     <div class="article-inner">
